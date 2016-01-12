@@ -21,7 +21,7 @@ interface StorageInterface
      * @param  string $casToken
      * @return mixed
      */
-    public function get($key, &$casToken = null);
+    public function get($key, & $casToken = null);
 
     /**
      * Get multiple values from the storage.
@@ -29,7 +29,7 @@ interface StorageInterface
      * @param  array $casTokens
      * @return array
      */
-    public function getMulti(array $keys, array &$casTokens = null);
+    public function getMulti(array $keys, array & $casTokens = null);
 
     /**
      * Add an value under a new key.
