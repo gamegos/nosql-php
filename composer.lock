@@ -4,9 +4,53 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d4c870331ecd40d5bd50048907867f81",
-    "content-hash": "527710d2923415f1b0e9a16e0fcb8acd",
-    "packages": [],
+    "hash": "d33ec8f739f32d26243c58b9b38ee547",
+    "content-hash": "2256e8c07fbe61ea71921afe6855bf60",
+    "packages": [
+        {
+            "name": "gamegos/events",
+            "version": "0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gamegos/events-php.git",
+                "reference": "8cc57ea27c9457334c802c5d754cf1cf316a0140"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gamegos/events-php/zipball/8cc57ea27c9457334c802c5d754cf1cf316a0140",
+                "reference": "8cc57ea27c9457334c802c5d754cf1cf316a0140",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "gamegos/php-code-sniffer": "*",
+                "phpunit/phpunit": "4.8.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Gamegos\\Events\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Safak Ozpinar",
+                    "email": "safak@gamegos.com"
+                }
+            ],
+            "description": "Library to implement event emitting capability",
+            "keywords": [
+                "events"
+            ],
+            "time": "2015-12-24 15:45:15"
+        }
+    ],
     "packages-dev": [
         {
             "name": "doctrine/instantiator",
