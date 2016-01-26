@@ -17,7 +17,6 @@ use Exception;
 
 /**
  * Test Class for AbstractStorage
- * @covers \Gamegos\NoSql\Storage\AbstractStorage
  * @author Safak Ozpinar <safak@gamegos.com>
  */
 class AbstractStorageTest extends PHPUnit_Framework_TestCase
