@@ -294,7 +294,7 @@ class AbstractStorageTest extends PHPUnit_Framework_TestCase
     public function testOperationsShouldCallDoOperation($operation, array $args, $result)
     {
         // Prepare the arguments.
-        $arguments = new OperationArguments();
+        $arguments = new OperationArguments($operation);
         foreach ($args as $argument => & $value) {
             $arguments->set($argument, $value);
         }
@@ -336,7 +336,7 @@ class AbstractStorageTest extends PHPUnit_Framework_TestCase
     public function testDoOperation($operation, array $args, $result)
     {
         // Prepare the arguments.
-        $arguments = new OperationArguments();
+        $arguments = new OperationArguments($operation);
         foreach ($args as $argument => & $value) {
             $arguments->set($argument, $value);
         }
@@ -412,13 +412,15 @@ class AbstractStorageTest extends PHPUnit_Framework_TestCase
         $this->setExpectedException(InvalidKeyException::class);
 
         $storage   = $this->getMockForAbstractClass(AbstractStorage::class);
-        $arguments = (new OperationArguments())->setKey($key);
-        $this->callDoOperation($storage, 'has', $arguments);
+        $operation = 'has';
+        $arguments = (new OperationArguments($operation))->setKey($key);
+
+        $this->callDoOperation($storage, $operation, $arguments);
     }
 
     /**
      * @dataProvider invalidKeyProvider
-     * @testdox doOperation() should throw InvalidKeyException on invalid keys
+     * @testdox doOperation() should throw InvalidKeyException if one of the keys is invalid
      */
     public function testDoOperationShouldThrowInvalidKeyExceptionOnInvalidKeys($key)
     {
@@ -426,9 +428,10 @@ class AbstractStorageTest extends PHPUnit_Framework_TestCase
         $this->setExpectedException(InvalidKeyException::class);
 
         $storage   = $this->getMockForAbstractClass(AbstractStorage::class);
-        $arguments = (new OperationArguments())->setKeys($keys);
+        $operation = 'getMulti';
+        $arguments = (new OperationArguments($operation))->setKeys($keys);
 
-        $this->callDoOperation($storage, 'getMulti', $arguments);
+        $this->callDoOperation($storage, $operation, $arguments);
     }
 
     /**

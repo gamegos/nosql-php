@@ -81,11 +81,6 @@ abstract class AbstractStorage implements StorageInterface
      */
     protected function doOperation($operation, OperationArguments $args)
     {
-        if ($args->has('key')) {
-            $this->validateKey($args->getKey());
-        } elseif ($args->has('keys')) {
-            array_walk($args->getKeys(), [$this, 'validateKey']);
-        }
         try {
             // Trigger 'beforeOperation' event.
             $this->fireBeforeOperation($operation, $args);
@@ -101,21 +96,6 @@ abstract class AbstractStorage implements StorageInterface
             $this->fireOnOperationException($operation, $args, $e);
             // Throw the original exception.
             throw $e;
-        }
-    }
-
-    /**
-     * Ensure that a key is a string.
-     * @param  mixed $key
-     * @throws \Gamegos\NoSql\Storage\Exception\InvalidKeyException
-     */
-    protected function validateKey($key)
-    {
-        if (!is_string($key)) {
-            throw new InvalidKeyException('NoSql key is expected to be a string!');
-        }
-        if ('' === $key) {
-            throw new InvalidKeyException('NoSql key is expected to be a non-empty string!');
         }
     }
 
@@ -262,8 +242,9 @@ abstract class AbstractStorage implements StorageInterface
      */
     public function has($key)
     {
-        $arguments = (new OperationArguments())->setKey($key);
-        return $this->doOperation(__FUNCTION__, $arguments);
+        $operation = __FUNCTION__;
+        $arguments = (new OperationArguments($operation))->setKey($key);
+        return $this->doOperation($operation, $arguments);
     }
 
     /**
@@ -272,11 +253,12 @@ abstract class AbstractStorage implements StorageInterface
      */
     public function get($key, & $casToken = null)
     {
-        $arguments = (new OperationArguments())->setKey($key);
+        $operation = __FUNCTION__;
+        $arguments = (new OperationArguments($operation))->setKey($key);
         if (func_num_args() > 1) {
             $arguments->setCasToken($casToken);
         }
-        return $this->doOperation(__FUNCTION__, $arguments);
+        return $this->doOperation($operation, $arguments);
     }
 
     /**
@@ -285,11 +267,12 @@ abstract class AbstractStorage implements StorageInterface
      */
     public function getMulti(array $keys, array & $casTokens = null)
     {
-        $arguments = (new OperationArguments())->setKeys($keys);
+        $operation = __FUNCTION__;
+        $arguments = (new OperationArguments($operation))->setKeys($keys);
         if (func_num_args() > 1) {
             $arguments->setCasTokens($casTokens);
         }
-        return $this->doOperation(__FUNCTION__, $arguments);
+        return $this->doOperation($operation, $arguments);
     }
 
     /**
@@ -298,11 +281,12 @@ abstract class AbstractStorage implements StorageInterface
      */
     public function add($key, $value, $expiry = 0)
     {
-        $arguments = (new OperationArguments())->setKey($key)->setValue($value);
+        $operation = __FUNCTION__;
+        $arguments = (new OperationArguments($operation))->setKey($key)->setValue($value);
         if (func_num_args() > 2) {
             $arguments->setExpiry($expiry);
         }
-        return $this->doOperation(__FUNCTION__, $arguments);
+        return $this->doOperation($operation, $arguments);
     }
 
     /**
@@ -311,14 +295,15 @@ abstract class AbstractStorage implements StorageInterface
      */
     public function set($key, $value, $expiry = 0, $casToken = null)
     {
-        $arguments = (new OperationArguments())->setKey($key)->setValue($value);
+        $operation = __FUNCTION__;
+        $arguments = (new OperationArguments($operation))->setKey($key)->setValue($value);
         if (func_num_args() > 2) {
             $arguments->setExpiry($expiry);
             if (func_num_args() > 3) {
                 $arguments->setCasToken($casToken);
             }
         }
-        return $this->doOperation(__FUNCTION__, $arguments);
+        return $this->doOperation($operation, $arguments);
     }
 
     /**
@@ -327,11 +312,12 @@ abstract class AbstractStorage implements StorageInterface
      */
     public function cas($casToken, $key, $value, $expiry = 0)
     {
-        $arguments = (new OperationArguments())->setCasToken($casToken)->setKey($key)->setValue($value);
+        $operation = __FUNCTION__;
+        $arguments = (new OperationArguments($operation))->setCasToken($casToken)->setKey($key)->setValue($value);
         if (func_num_args() > 3) {
             $arguments->setExpiry($expiry);
         }
-        return $this->doOperation(__FUNCTION__, $arguments);
+        return $this->doOperation($operation, $arguments);
     }
 
     /**
@@ -340,8 +326,9 @@ abstract class AbstractStorage implements StorageInterface
      */
     public function delete($key)
     {
-        $arguments = (new OperationArguments())->setKey($key);
-        return $this->doOperation(__FUNCTION__, $arguments);
+        $operation = __FUNCTION__;
+        $arguments = (new OperationArguments($operation))->setKey($key);
+        return $this->doOperation($operation, $arguments);
     }
 
     /**
@@ -350,11 +337,12 @@ abstract class AbstractStorage implements StorageInterface
      */
     public function append($key, $value, $expiry = 0)
     {
-        $arguments = (new OperationArguments())->setKey($key)->setValue($value);
+        $operation = __FUNCTION__;
+        $arguments = (new OperationArguments($operation))->setKey($key)->setValue($value);
         if (func_num_args() > 2) {
             $arguments->setExpiry($expiry);
         }
-        return $this->doOperation(__FUNCTION__, $arguments);
+        return $this->doOperation($operation, $arguments);
     }
 
     /**
@@ -363,7 +351,8 @@ abstract class AbstractStorage implements StorageInterface
      */
     public function increment($key, $offset = 1, $initial = 0, $expiry = 0)
     {
-        $arguments = (new OperationArguments())->setKey($key);
+        $operation = __FUNCTION__;
+        $arguments = (new OperationArguments($operation))->setKey($key);
         if (func_num_args() > 1) {
             $arguments->setOffset($offset);
             if (func_num_args() > 2) {
@@ -373,7 +362,7 @@ abstract class AbstractStorage implements StorageInterface
                 }
             }
         }
-        return $this->doOperation(__FUNCTION__, $arguments);
+        return $this->doOperation($operation, $arguments);
     }
 
     /**
