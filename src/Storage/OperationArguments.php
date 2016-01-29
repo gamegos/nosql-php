@@ -29,11 +29,14 @@ class OperationArguments
     /**
      * Construct
      * @param string $operation
-     * @author Safak Ozpinar <safak@gamegos.com>
+     * @param array $args
      */
-    public function __construct($operation)
+    public function __construct($operation, array & $args = [])
     {
         $this->operation = $operation;
+        foreach ($args as $name => & $value) {
+            $this->set($name, $value);
+        }
     }
 
     /**

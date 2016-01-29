@@ -30,11 +30,7 @@ class AbstractStorageTest extends PHPUnit_Framework_TestCase
     public function testOperationsShouldCallDoOperation($operation, array $args, $result)
     {
         // Prepare the arguments.
-        $arguments = new OperationArguments($operation);
-        foreach ($args as $argument => & $value) {
-            $arguments->set($argument, $value);
-        }
-        unset($value);
+        $arguments = new OperationArguments($operation, $args);
 
         // Create mock objects.
         $storage = $this->getMockBuilder(AbstractStorage::class)
@@ -72,11 +68,7 @@ class AbstractStorageTest extends PHPUnit_Framework_TestCase
     public function testDoOperation($operation, array $args, $result)
     {
         // Prepare the arguments.
-        $arguments = new OperationArguments($operation);
-        foreach ($args as $argument => & $value) {
-            $arguments->set($argument, $value);
-        }
-        unset($value);
+        $arguments = new OperationArguments($operation, $args);
 
         // Create mock objects.
         $storage  = $this->getMockForAbstractClass(AbstractStorage::class);
