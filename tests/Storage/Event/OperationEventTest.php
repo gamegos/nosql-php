@@ -20,10 +20,11 @@ class OperationEventTest extends PHPUnit_Framework_TestCase
 {
     public function testConstructorArguments()
     {
+        $key       = 'foo';
         $eventName = 'beforeOperation';
         $storage   = $this->getMockForAbstractClass(StorageInterface::class);
         $operation = 'get';
-        $arguments = (new OperationArguments($operation))->setKey($key = 'foo');
+        $arguments = (new OperationArguments($operation))->setKey($key);
         $returnVal = 'bar';
         $exception = new Exception();
 
@@ -41,8 +42,9 @@ class OperationEventTest extends PHPUnit_Framework_TestCase
     {
         $event = $this->getMock(OperationEvent::class, null, [], '', false);
 
+        $key       = 'foo';
         $operation = 'get';
-        $arguments = (new OperationArguments($operation))->setKey($key = 'foo');
+        $arguments = (new OperationArguments($operation))->setKey($key);
         $returnVal = 'bar';
         $exception = new Exception();
 
@@ -59,11 +61,12 @@ class OperationEventTest extends PHPUnit_Framework_TestCase
 
     public function testReturnValueReference()
     {
+        $key   = 'foo';
         $event = new OperationEvent(
             'beforeOperation',
             $this->getMockForAbstractClass(StorageInterface::class),
             'get',
-            (new OperationArguments('get'))->setKey($key = 'foo')
+            (new OperationArguments('get'))->setKey($key)
         );
 
         $returnValueA = 'foo';
