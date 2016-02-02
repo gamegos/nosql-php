@@ -201,6 +201,7 @@ class OperationArguments
      *
      * Methods using this argument:
      *   {@link AbstractStorage::get()}
+     *   {@link AbstractStorage::set()}
      *   {@link AbstractStorage::cas()}
      *
      * @throws \OutOfRangeException If the argument is not set
@@ -216,6 +217,7 @@ class OperationArguments
      *
      * Methods using this argument:
      *   {@link AbstractStorage::get()}
+     *   {@link AbstractStorage::set()}
      *   {@link AbstractStorage::cas()}
      *
      * @param  string $casToken

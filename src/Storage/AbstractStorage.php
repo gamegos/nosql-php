@@ -52,6 +52,7 @@ abstract class AbstractStorage implements StorageInterface
      * Trigger 'afterOperation' event.
      * @param string $operation
      * @param \Gamegos\NoSql\Storage\OperationArguments $args
+     * @param mixed $returnValue
      */
     protected function fireAfterOperation($operation, OperationArguments $args, & $returnValue)
     {
@@ -64,6 +65,7 @@ abstract class AbstractStorage implements StorageInterface
      * Trigger 'onOperationException' event.
      * @param string $operation
      * @param \Gamegos\NoSql\Storage\OperationArguments $args
+     * @param \Exception $exception
      */
     protected function fireOnOperationException($operation, OperationArguments $args, Exception $exception)
     {
