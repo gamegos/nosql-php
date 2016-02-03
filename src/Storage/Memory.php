@@ -40,8 +40,12 @@ class Memory extends AbstractStorage
     protected function getInternal($key, & $casToken = null)
     {
         if ($this->hasInternal($key)) {
-            $casToken = $this->data[$key][2];
-            return $this->data[$key][0];
+            $value = $this->data[$key][0];
+            if (func_num_args() > 1) {
+                $casToken            = $this->createCasToken($key, $value);
+                $this->data[$key][2] = $casToken;
+            }
+            return $value;
         }
         return null;
     }
@@ -51,15 +55,22 @@ class Memory extends AbstractStorage
      */
     protected function getMultiInternal(array $keys, array & $casTokens = null)
     {
-        $casTokens = [];
-        $data      = [];
+        $result = [];
         foreach ($keys as $key) {
             if ($this->hasInternal($key)) {
-                $casTokens[$key] = null;
-                $data[$key]      = $this->getInternal($key, $casTokens[$key]);
+                $result[$key] = $this->data[$key][0];
             }
         }
-        return $data;
+
+        if (func_num_args() > 1) {
+            $casTokens = [];
+            foreach ($result as $key => $value) {
+                $casTokens[$key]     = $this->createCasToken($key, $value);
+                $this->data[$key][2] = $casTokens[$key];
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -82,7 +93,7 @@ class Memory extends AbstractStorage
             return $this->casInternal($casToken, $key, $value, $expiry);
         }
         $expiration       = $expiry <= 0 ? 0 : ($expiry > 2592000 ? $expiry : time() + $expiry);
-        $this->data[$key] = [$value, $expiration, $this->createCasToken($key, $value)];
+        $this->data[$key] = [$value, $expiration, null];
         return true;
     }
 
@@ -165,14 +176,14 @@ class Memory extends AbstractStorage
      */
     protected function getCasToken($key)
     {
-        if ($this->has($key)) {
+        if (isset($this->data[$key])) {
             return $this->data[$key][2];
         }
         return null;
     }
 
     /**
-     * Create CAS (check-and-set) token for given key-value combination.
+     * Create a CAS (check-and-set) token for given key-value combination.
      * @param  string $key
      * @param  mixed $value
      * @return string
