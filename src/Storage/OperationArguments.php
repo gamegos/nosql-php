@@ -321,6 +321,9 @@ class OperationArguments
      */
     public function setValue(& $value)
     {
+        if ('append' == $this->operation) {
+            $this->validateArgument('value', $value, 'string');
+        }
         return $this->set('value', $value);
     }
 

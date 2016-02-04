@@ -1,9 +1,6 @@
 <?php
 namespace Gamegos\NoSql\Storage;
 
-/* Imports from gamegos/nosql */
-use Gamegos\NoSql\Storage\Exception\OperationArgumentException;
-
 /* Imports from PHP core */
 use UnexpectedValueException;
 
@@ -122,18 +119,10 @@ class Memory extends AbstractStorage
 
     /**
      * {@inheritdoc}
-     * @throws \Gamegos\NoSql\Storage\Exception\OperationArgumentException If $value is not string
-     * @throws \UnexpectedValueException                                   If existing value is not string
+     * @throws \UnexpectedValueException If existing value is not string
      */
     protected function appendInternal($key, $value, $expiry = 0)
     {
-        if (!is_string($value)) {
-            throw new OperationArgumentException(sprintf(
-                'Method append() expects $value to be string, %s given.',
-                gettype($value)
-            ));
-        }
-
         if ($this->hasInternal($key)) {
             $oldValue = $this->getInternal($key);
             if (!is_string($oldValue)) {

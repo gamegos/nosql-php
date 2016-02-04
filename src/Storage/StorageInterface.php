@@ -72,7 +72,7 @@ interface StorageInterface
     /**
      * Append a value to an existing value.
      * @param  string $key
-     * @param  mixed $value
+     * @param  string $value
      * @param  int $expiry
      * @return bool
      */
