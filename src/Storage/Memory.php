@@ -150,9 +150,9 @@ class Memory extends AbstractStorage
                     gettype($oldValue)
                 ));
             }
-            $value = $oldValue + (int) $offset;
+            $value = $oldValue + $offset;
         } else {
-            $value = (int) $initial;
+            $value = $initial;
         }
         return $this->setInternal($key, $value, $expiry);
     }
