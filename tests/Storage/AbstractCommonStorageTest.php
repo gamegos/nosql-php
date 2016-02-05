@@ -63,11 +63,13 @@ abstract class AbstractCommonStorageTest extends PHPUnit_Framework_TestCase
 
     /**
      * @testdox add() should fail for existing key
-     * @depends testAddShouldSucceedForNewKey
      */
-    public function testAddShouldFailForExistingKey($params)
+    public function testAddShouldFailForExistingKey()
     {
-        extract($params);
+        $params  = $this->testAddShouldSucceedForNewKey();
+        $storage = $params['storage'];
+        $key     = $params['key'];
+
         $this->assertFalse($storage->add($key, 'baz'));
     }
 
@@ -118,10 +120,10 @@ abstract class AbstractCommonStorageTest extends PHPUnit_Framework_TestCase
 
     /**
      * @testdox getMulti() with CAS token
-     * @depends testGetMulti
      */
-    public function testGetMultiWithCasToken($params)
+    public function testGetMultiWithCasToken()
     {
+        $params = $this->testGetMulti();
         /* @var $storage \Gamegos\NoSql\Storage\StorageInterface */
         $storage   = $params['storage'];
         $items     = $params['items'];
