@@ -7,9 +7,6 @@ use PHPUnit_Framework_TestCase;
 /* Imports from PHP core */
 use RuntimeException;
 
-/* Imports from gamegos/nosql */
-use Gamegos\NoSql\Storage\Exception\OperationArgumentException;
-
 /**
  * Base Test Class for Storages
  * @author Safak Ozpinar <safak@gamegos.com>
@@ -183,18 +180,6 @@ abstract class AbstractCommonStorageTest extends PHPUnit_Framework_TestCase
             'object'      => [(object) ['foo' => 'bar']],
             'resource'    => [fopen('php://memory', 'r')],
         ];
-    }
-
-    /**
-     * @testdox      append() should throw OperationArgumentException for non-string value
-     * @dataProvider nonStringProvider
-     */
-    public function testAppendShouldThrowExceptionForNonStringValue($value)
-    {
-        $storage = $this->createStorage();
-
-        $this->setExpectedException(OperationArgumentException::class);
-        $storage->append('foo', $value);
     }
 
     /**
