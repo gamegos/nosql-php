@@ -5,14 +5,14 @@
          bootstrap="vendor/autoload.php"
 >
     <testsuites>
-        <testsuite name="Gamegos NoSql Library Test Suite">
-            <directory>./tests/</directory>
+        <testsuite name="main">
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./src</directory>
+            <directory suffix=".php">src</directory>
         </whitelist>
     </filter>
     
