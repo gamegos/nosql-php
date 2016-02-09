@@ -12,5 +12,5 @@ Store your data in NoSql (key-value) databases.
 
 Run the following command in the root directory of your project:
 ```sh
-composer require gamegos/nosql:dev-master
+composer require gamegos/nosql
 ```
