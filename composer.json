@@ -9,7 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "~5.5 || 7.0.*",
-        "gamegos/events": "~0.1"
+        "gamegos/events": "^0.3"
     },
     "autoload": {
         "psr-4": {
