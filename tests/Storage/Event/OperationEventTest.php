@@ -40,7 +40,12 @@ class OperationEventTest extends PHPUnit_Framework_TestCase
 
     public function testSettersAndGetters()
     {
-        $event = $this->getMock(OperationEvent::class, null, [], '', false);
+        $event = new OperationEvent(
+            'unusedEvent',
+            $this->getMockForAbstractClass(StorageInterface::class),
+            'differentOperation',
+            $this->getMockBuilder(OperationArguments::class)->disableOriginalConstructor()->getMock()
+        );
 
         $key       = 'foo';
         $operation = 'get';
