@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.1] - 2019-03-18
+* Fixed return value of Memory::increment() method.
+* Improved unit tests.
+
 ## [1.0.0] - 2019-03-15
 * Added support for PHP versions 7.1, 7.2 and 7.3.
 * Updated test environment for testing with docker.
