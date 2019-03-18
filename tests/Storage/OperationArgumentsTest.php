@@ -30,6 +30,19 @@ class OperationArgumentsTest extends PHPUnit_Framework_TestCase
         $arguments->validateArgument('arg', $value, $expectType, $nullable);
     }
 
+    /**
+     * @param $value
+     * @param $expectType
+     * @param $nullable
+     * @dataProvider invalidArgumentProvider
+     */
+    public function testValidateArrayArgumentThrowsExceptionForInvalidArgument($value, $expectType, $nullable)
+    {
+        $arguments = new OperationArguments('operationX');
+        $this->setExpectedException(OperationArgumentException::class);
+        $arguments->validateArrayArgument('arg', [$value], $expectType, $nullable);
+    }
+
     public function testGetShouldThrowExceptionForUndefinedArgument()
     {
         $realArgs  = ['foo' => 'bar'];
