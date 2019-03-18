@@ -22,7 +22,7 @@ use Exception;
 class AbstractStorageTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @dataProvider Gamegos\NoSql\Tests\TestAsset\DataProvider\OperationParamsProvider::getData
+     * @dataProvider \Gamegos\NoSql\Tests\TestAsset\DataProvider\OperationParamsProvider::getData
      * @param string $operation
      * @param array $args
      * @param mixed $result
@@ -60,10 +60,11 @@ class AbstractStorageTest extends PHPUnit_Framework_TestCase
 
     /**
      * @testdox doOperation() should call internal method and fire operation events
-     * @dataProvider Gamegos\NoSql\Tests\TestAsset\DataProvider\OperationParamsProvider::getData
+     * @dataProvider \Gamegos\NoSql\Tests\TestAsset\DataProvider\OperationParamsProvider::getData
      * @param string $operation
      * @param array $args
      * @param mixed $result
+     * @throws \ReflectionException
      */
     public function testDoOperation($operation, array $args, $result)
     {
@@ -168,6 +169,7 @@ class AbstractStorageTest extends PHPUnit_Framework_TestCase
      * @param  string $operation
      * @param  \Gamegos\NoSql\Storage\OperationArguments $args
      * @return mixed
+     * @throws \ReflectionException
      */
     protected function callDoOperation(AbstractStorage $storage, $operation, OperationArguments $args)
     {
