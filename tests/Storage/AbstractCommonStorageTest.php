@@ -203,7 +203,7 @@ abstract class AbstractCommonStorageTest extends PHPUnit_Framework_TestCase
 
         $storage = $this->createStorage();
         for ($i = 0; $i < 5; $i++) {
-            $this->assertEquals($initial + $offset * $i, $storage->increment($key, $offset, $initial));
+            $this->assertSame($initial + $offset * $i, $storage->increment($key, $offset, $initial));
         }
     }
 

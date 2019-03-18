@@ -154,7 +154,9 @@ class Memory extends AbstractStorage
         } else {
             $value = $initial;
         }
-        return $this->setInternal($key, $value, $expiry);
+        // setInternal() always returns true without casToken argument.
+        $this->setInternal($key, $value, $expiry);
+        return $value;
     }
 
     /**
