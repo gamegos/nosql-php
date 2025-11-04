@@ -1,51 +1,14 @@
-dockerfile = ci/test/php$(PHP_VERSION)/Dockerfile
-image      = nosql-test:php$(PHP_VERSION)
+.PHONY: test test-php83 test-php84
 
-workdir = ${shell pwd}
-uid     = ${shell id -u}
+test: check-PHP_VERSION ## Run tests in the default PHP version
+	docker compose run --build --rm tester vendor/bin/phpunit \
+		--coverage-text=php://stdout --coverage-html=.tmp/reports/coverage
 
-test-install: check-PHP_VERSION
-	docker build -t $(image) --build-arg uid=$(uid) -f $(dockerfile) .
-	docker run --rm -v $(workdir):/app -e GITHUB_TOKEN $(image) composer-install
+test-php83: ## Run tests with PHP 8.3
+	PHP_VERSION=8.3 make --no-print-directory test
 
-test-run: check-PHP_VERSION
-ifdef CODE_COVERAGE
-	docker run --rm -v $(workdir):/app $(image) /app/vendor/bin/phpunit --coverage-clover clover.xml
-else
-	docker run --rm -v $(workdir):/app $(image) /app/vendor/bin/phpunit
-endif
+test-php84: ## Run tests with PHP 8.4
+	PHP_VERSION=8.4 make --no-print-directory test
 
 check-%:
 	${if $($(*)), , ${error $(*) undefined}}
-
-
-# Shortcuts
-test-php55: export PHP_VERSION=5.5
-test-php55:
-	make --no-print-directory test-install
-	make --no-print-directory test-run
-
-test-php56: export PHP_VERSION=5.6
-test-php56:
-	make --no-print-directory test-install
-	make --no-print-directory test-run
-
-test-php70: export PHP_VERSION=7.0
-test-php70:
-	make --no-print-directory test-install
-	make --no-print-directory test-run
-
-test-php71: export PHP_VERSION=7.1
-test-php71:
-	make --no-print-directory test-install
-	make --no-print-directory test-run
-
-test-php72: export PHP_VERSION=7.2
-test-php72:
-	make --no-print-directory test-install
-	make --no-print-directory test-run
-
-test-php73: export PHP_VERSION:=7.3
-test-php73:
-	make --no-print-directory test-install
-	make --no-print-directory test-run
