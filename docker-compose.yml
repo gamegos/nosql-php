@@ -1,12 +1,9 @@
 services:
-  tester:
+  test:
     build:
       context: .
       dockerfile: "ci/test/php${PHP_VERSION}/Dockerfile"
-      secrets:
-        - github_token
+      target: test
     volumes:
-      - .tmp:/app/.tmp
-secrets:
-  github_token:
-    environment: GITHUB_TOKEN
+      - .:/app
+    working_dir: /app

@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM php:8.3-cli
+FROM php:8.3-cli AS test
 
 # Install system dependencies
 RUN --mount=type=cache,target=/var/cache/apt \
@@ -32,17 +32,29 @@ ENV COMPOSER_DISABLE_XDEBUG_WARN=1
 # Create app user
 RUN useradd -m -u 1000 -s /bin/bash appuser
 
+# Switch to app user for composer operations
+USER appuser
+
+# ----------------------#
+# Stage: vendor-install #
+# ----------------------#
+FROM test AS vendor-install
+
 # Set working directory and permissions
 WORKDIR /app
 RUN chown appuser:appuser /app
 
-# Switch to app user for composer operations
-USER appuser
-
+# Copy composer files
 COPY --chown=appuser:appuser composer.* ./
 
+# Install composer dependencies
 RUN --mount=type=ssh,uid=1000 \
     --mount=type=cache,target=/home/appuser/.composer/cache \
     composer install --no-interaction --no-scripts --no-cache --prefer-dist
 
-COPY --chown=appuser:appuser . .
+#----------------------#
+# Stage: vendor-export #
+#----------------------#
+FROM scratch AS vendor-export
+COPY --from=vendor-install /app/vendor /vendor
+COPY --from=vendor-install /app/composer.lock /composer.lock

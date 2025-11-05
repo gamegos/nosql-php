@@ -3,7 +3,7 @@
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
          colors="true"
          bootstrap="vendor/autoload.php"
-         cacheDirectory=".phpunit.cache"
+         cacheDirectory=".tmp/.phpunit.cache"
          executionOrder="depends,defects"
          requireCoverageMetadata="false"
          beStrictAboutCoverageMetadata="false"
@@ -20,7 +20,7 @@
 
     <source>
         <include>
-            <directory suffix=".php">./src</directory>
+            <directory>./src</directory>
         </include>
     </source>
 
