@@ -1,12 +1,9 @@
 <?php
 namespace Gamegos\NoSql\Storage;
 
-/* Imports from PHP core */
-use OutOfRangeException;
-
-/* Imports from gamegos/nosql */
 use Gamegos\NoSql\Storage\Exception\OperationArgumentException;
 use Gamegos\NoSql\Storage\Exception\InvalidKeyException;
+use OutOfRangeException;
 
 /**
  * Argument Container for Storage Operations
@@ -18,23 +15,23 @@ class OperationArguments
      * Operation method
      * @var string
      */
-    protected $operation;
+    protected string $operation;
 
     /**
      * Argument values
      * @var array
      */
-    protected $values = [];
+    protected array $values = [];
 
     /**
      * Construct
      * @param string $operation
      * @param array $args
      */
-    public function __construct($operation, array & $args = [])
+    public function __construct(string $operation, array &$args = [])
     {
         $this->operation = $operation;
-        foreach ($args as $name => & $value) {
+        foreach ($args as $name => &$value) {
             $this->set($name, $value);
         }
     }
@@ -48,7 +45,7 @@ class OperationArguments
      * @see    OperationArguments::validateArgument()
      * @see    OperationArguments::validateArrayArgument()
      */
-    protected function checkType($value, $type, $nullable = false)
+    protected function checkType(mixed $value, string $type, bool $nullable = false): bool
     {
         if (gettype($value) === $type) {
             return true;
@@ -58,19 +55,19 @@ class OperationArguments
 
     /**
      * Validate an argument.
-     * @param  string $argname
+     * @param  string $argName
      * @param  mixed $value
      * @param  string $type
      * @param  bool $nullable
      * @throws \Gamegos\NoSql\Storage\Exception\OperationArgumentException
      */
-    public function validateArgument($argname, $value, $type, $nullable = false)
+    public function validateArgument(string $argName, mixed $value, string $type, bool $nullable = false): void
     {
         if (!$this->checkType($value, $type, $nullable)) {
             throw new OperationArgumentException(sprintf(
                 'Method %s() expects $%s to be %s, %s given.',
                 $this->operation,
-                $argname,
+                $argName,
                 $type,
                 gettype($value)
             ));
@@ -79,20 +76,20 @@ class OperationArguments
 
     /**
      * Validate elements in an argument in the type of array.
-     * @param  string $argname
+     * @param  string $argName
      * @param  array $value
      * @param  string $type
      * @param  bool $nullable
      * @throws \Gamegos\NoSql\Storage\Exception\OperationArgumentException
      */
-    public function validateArrayArgument($argname, array $value, $type, $nullable = false)
+    public function validateArrayArgument(string $argName, array $value, string $type, bool $nullable = false): void
     {
         foreach ($value as $element) {
             if (!$this->checkType($element, $type, $nullable)) {
                 throw new OperationArgumentException(sprintf(
                     'Method %s() expects all of $%s elements to be %s, found %s.',
                     $this->operation,
-                    $argname,
+                    $argName,
                     $type,
                     gettype($element)
                 ));
@@ -102,53 +99,50 @@ class OperationArguments
 
     /**
      * Validate a key.
-     * @param  mixed $key
+     * @param  string $key
      * @throws \Gamegos\NoSql\Storage\Exception\InvalidKeyException If the key is not a string
      * @throws \Gamegos\NoSql\Storage\Exception\InvalidKeyException If the key is an empty string
      */
-    public function validateKey($key)
+    public function validateKey(string $key): void
     {
-        if (!is_string($key)) {
-            throw new InvalidKeyException('NoSql key is expected to be a string!');
-        }
-        if ('' === $key) {
-            throw new InvalidKeyException('NoSql key is expected to be a non-empty string!');
+        if ('' == $key) {
+            throw new InvalidKeyException('NoSql key is expected to be a non-empty string.');
         }
     }
 
     /**
      * Check if the specified argument is set.
-     * @param  string $argname
+     * @param  string $argName
      * @return boolean
      */
-    public function has($argname)
+    public function has(string $argName): bool
     {
-        return array_key_exists($argname, $this->values);
+        return array_key_exists($argName, $this->values);
     }
 
     /**
      * Get reference of an argument.
-     * @param  string $argname
+     * @param  string $argName
      * @return mixed
      * @throws \OutOfRangeException If the argument is not set
      */
-    public function & get($argname)
+    public function &get(string $argName): mixed
     {
-        if ($this->has($argname)) {
-            return $this->values[$argname];
+        if ($this->has($argName)) {
+            return $this->values[$argName];
         }
-        throw new OutOfRangeException(sprintf('Argument %s does not exist.', $argname));
+        throw new OutOfRangeException(sprintf('Argument %s does not exist.', $argName));
     }
 
     /**
      * Set reference an argument.
-     * @param  string $argname
+     * @param  string $argName
      * @param  mixed $value
      * @return \Gamegos\NoSql\Storage\OperationArguments
      */
-    public function set($argname, & $value)
+    public function set(string $argName, mixed &$value): static
     {
-        $this->values[$argname] = & $value;
+        $this->values[$argName] = &$value;
         return $this;
     }
 
@@ -168,14 +162,13 @@ class OperationArguments
      * @throws \OutOfRangeException If the argument is not set
      * @return string
      */
-    public function & getKey()
+    public function &getKey(): string
     {
         return $this->get('key');
     }
 
     /**
      * Set the reference of the argument 'key'.
-     *
      * Methods using this argument:
      *   {@link AbstractStorage::has()}
      *   {@link AbstractStorage::get()}
@@ -185,12 +178,11 @@ class OperationArguments
      *   {@link AbstractStorage::delete()}
      *   {@link AbstractStorage::append()}
      *   {@link AbstractStorage::increment()}
-     *
      * @param  string $key
-     * @throws \Gamegos\NoSql\Storage\Exception\InvalidKeyException
      * @return \Gamegos\NoSql\Storage\OperationArguments
+     * @throws \Gamegos\NoSql\Storage\Exception\InvalidKeyException
      */
-    public function setKey(& $key)
+    public function setKey(string &$key): static
     {
         $this->validateKey($key);
         return $this->set('key', $key);
@@ -198,33 +190,27 @@ class OperationArguments
 
     /**
      * Get the reference of the argument 'casToken'.
-     *
      * Methods using this argument:
      *   {@link AbstractStorage::get()}
      *   {@link AbstractStorage::set()}
      *   {@link AbstractStorage::cas()}
-     *
-     * @throws \OutOfRangeException If the argument is not set
-     * @return string
+     * @return string|null
      */
-    public function & getCasToken()
+    public function &getCasToken(): ?string
     {
         return $this->get('casToken');
     }
 
     /**
      * Set the reference of the argument 'casToken'.
-     *
      * Methods using this argument:
      *   {@link AbstractStorage::get()}
      *   {@link AbstractStorage::set()}
      *   {@link AbstractStorage::cas()}
-     *
-     * @param  string $casToken
-     * @throws \Gamegos\NoSql\Storage\Exception\OperationArgumentException
+     * @param  string|null $casToken
      * @return \Gamegos\NoSql\Storage\OperationArguments
      */
-    public function setCasToken(& $casToken)
+    public function setCasToken(?string &$casToken): static
     {
         $this->validateArgument('casToken', $casToken, 'string', true);
         return $this->set('casToken', $casToken);
@@ -239,7 +225,7 @@ class OperationArguments
      * @throws \OutOfRangeException If the argument is not set
      * @return array
      */
-    public function & getKeys()
+    public function &getKeys(): array
     {
         return $this->get('keys');
     }
@@ -254,7 +240,7 @@ class OperationArguments
      * @throws \Gamegos\NoSql\Storage\Exception\InvalidKeyException
      * @return \Gamegos\NoSql\Storage\OperationArguments
      */
-    public function setKeys(array & $keys)
+    public function setKeys(array &$keys): static
     {
         array_walk($keys, [$this, 'validateKey']);
         return $this->set('keys', $keys);
@@ -269,7 +255,7 @@ class OperationArguments
      * @throws \OutOfRangeException If the argument is not set
      * @return array
      */
-    public function & getCasTokens()
+    public function &getCasTokens(): array
     {
         return $this->get('casTokens');
     }
@@ -284,7 +270,7 @@ class OperationArguments
      * @throws \Gamegos\NoSql\Storage\Exception\OperationArgumentException
      * @return \Gamegos\NoSql\Storage\OperationArguments
      */
-    public function setCasTokens(array & $casTokens)
+    public function setCasTokens(array &$casTokens): static
     {
         $this->validateArrayArgument('casTokens', $casTokens, 'string', true);
         return $this->set('casTokens', $casTokens);
@@ -302,7 +288,7 @@ class OperationArguments
      * @throws \OutOfRangeException If the argument is not set
      * @return mixed
      */
-    public function & getValue()
+    public function &getValue(): mixed
     {
         return $this->get('value');
     }
@@ -319,7 +305,7 @@ class OperationArguments
      * @param  mixed $value
      * @return \Gamegos\NoSql\Storage\OperationArguments
      */
-    public function setValue(& $value)
+    public function setValue(mixed &$value): static
     {
         if ('append' == $this->operation) {
             $this->validateArgument('value', $value, 'string');
@@ -340,7 +326,7 @@ class OperationArguments
      * @throws \OutOfRangeException If the argument is not set
      * @return int
      */
-    public function & getExpiry()
+    public function &getExpiry(): int
     {
         return $this->get('expiry');
     }
@@ -359,7 +345,7 @@ class OperationArguments
      * @throws \Gamegos\NoSql\Storage\Exception\OperationArgumentException
      * @return \Gamegos\NoSql\Storage\OperationArguments
      */
-    public function setExpiry(& $expiry)
+    public function setExpiry(int &$expiry): static
     {
         $this->validateArgument('expiry', $expiry, 'integer');
         return $this->set('expiry', $expiry);
@@ -374,7 +360,7 @@ class OperationArguments
      * @throws \OutOfRangeException If the argument is not set
      * @return int
      */
-    public function & getOffset()
+    public function &getOffset(): int
     {
         return $this->get('offset');
     }
@@ -389,7 +375,7 @@ class OperationArguments
      * @throws \Gamegos\NoSql\Storage\Exception\OperationArgumentException
      * @return \Gamegos\NoSql\Storage\OperationArguments
      */
-    public function setOffset(& $offset)
+    public function setOffset(int &$offset): static
     {
         $this->validateArgument('offset', $offset, 'integer');
         return $this->set('offset', $offset);
@@ -404,7 +390,7 @@ class OperationArguments
      * @throws \OutOfRangeException If the argument is not set
      * @return int
      */
-    public function & getInitial()
+    public function &getInitial(): int
     {
         return $this->get('initial');
     }
@@ -419,7 +405,7 @@ class OperationArguments
      * @throws \Gamegos\NoSql\Storage\Exception\OperationArgumentException
      * @return \Gamegos\NoSql\Storage\OperationArguments
      */
-    public function setInitial(& $initial)
+    public function setInitial(int &$initial): static
     {
         $this->validateArgument('initial', $initial, 'integer');
         return $this->set('initial', $initial);

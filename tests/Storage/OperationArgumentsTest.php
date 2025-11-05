@@ -1,58 +1,52 @@
 <?php
 namespace Gamegos\NoSql\Tests\Storage;
 
-/* Imports from PHPUnit */
-use PHPUnit_Framework_TestCase;
-
-/* Import from gamegos/nosql */
 use Gamegos\NoSql\Storage\OperationArguments;
 use Gamegos\NoSql\Storage\Exception\OperationArgumentException;
-
-/* Imports from PHP core */
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestDox;
+use PHPUnit\Framework\TestCase;
 use OutOfRangeException;
 
 /**
  * Test Class for OperationArguments
  * @author Safak Ozpinar <safak@gamegos.com>
  */
-class OperationArgumentsTest extends PHPUnit_Framework_TestCase
+class OperationArgumentsTest extends TestCase
 {
-    /**
-     * @param $value
-     * @param $expectType
-     * @param $nullable
-     * @dataProvider invalidArgumentProvider
-     */
-    public function testValidateArgumentThrowsExceptionForInvalidArgument($value, $expectType, $nullable)
+    #[Test]
+    #[TestDox('validateArgument() should throw exception with data set "$_dataName"')]
+    #[DataProvider('invalidArgumentProvider')]
+    public function validateArgumentThrowsExceptionForInvalidArgument(mixed $value, string $expectType, bool $nullable)
     {
         $arguments = new OperationArguments('operationX');
-        $this->setExpectedException(OperationArgumentException::class);
+        $this->expectException(OperationArgumentException::class);
         $arguments->validateArgument('arg', $value, $expectType, $nullable);
     }
 
-    /**
-     * @param $value
-     * @param $expectType
-     * @param $nullable
-     * @dataProvider invalidArgumentProvider
-     */
-    public function testValidateArrayArgumentThrowsExceptionForInvalidArgument($value, $expectType, $nullable)
+    #[Test]
+    #[TestDox('validateArrayArgument() should throw exception with data set "$_dataName"')]
+    #[DataProvider('invalidArgumentProvider')]
+    public function validateArrayArgumentThrowsExceptionForInvalidArgument(mixed $value, string $expectType, bool $nullable)
     {
         $arguments = new OperationArguments('operationX');
-        $this->setExpectedException(OperationArgumentException::class);
+        $this->expectException(OperationArgumentException::class);
         $arguments->validateArrayArgument('arg', [$value], $expectType, $nullable);
     }
 
-    public function testGetShouldThrowExceptionForUndefinedArgument()
+    #[Test]
+    #[TestDox('get() should throw exception for undefined argument')]
+    public function getShouldThrowExceptionForUndefinedArgument()
     {
         $realArgs  = ['foo' => 'bar'];
         $undefined = 'baz';
         $arguments = new OperationArguments('operationX', $realArgs);
-        $this->setExpectedException(OutOfRangeException::class, sprintf('Argument %s does not exist.', $undefined));
+        $this->expectExceptionObject(new OutOfRangeException(sprintf('Argument %s does not exist.', $undefined)));
         $arguments->get($undefined);
     }
 
-    public function invalidArgumentProvider()
+    public static function invalidArgumentProvider(): array
     {
         $acceptTypes = [
             'boolean',

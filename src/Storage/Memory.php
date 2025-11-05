@@ -14,12 +14,12 @@ class Memory extends AbstractStorage
      * Data storage
      * @var array
      */
-    private $data = [];
+    private array $data = [];
 
     /**
      * {@inheritdoc}
      */
-    protected function hasInternal($key)
+    protected function hasInternal(string $key): bool
     {
         if (isset($this->data[$key])) {
             $expiration = $this->data[$key][1];
@@ -34,7 +34,7 @@ class Memory extends AbstractStorage
     /**
      * {@inheritdoc}
      */
-    protected function getInternal($key, & $casToken = null)
+    protected function getInternal(string $key, ?string &$casToken = null): mixed
     {
         if ($this->hasInternal($key)) {
             $value = $this->data[$key][0];
@@ -50,7 +50,7 @@ class Memory extends AbstractStorage
     /**
      * {@inheritdoc}
      */
-    protected function getMultiInternal(array $keys, array & $casTokens = null)
+    protected function getMultiInternal(array $keys, ?array &$casTokens = null): array
     {
         $result = [];
         foreach ($keys as $key) {
@@ -73,7 +73,7 @@ class Memory extends AbstractStorage
     /**
      * {@inheritdoc}
      */
-    protected function addInternal($key, $value, $expiry = 0)
+    protected function addInternal(string $key, mixed $value, int $expiry = 0): bool
     {
         if ($this->hasInternal($key)) {
             return false;
@@ -84,9 +84,9 @@ class Memory extends AbstractStorage
     /**
      * {@inheritdoc}
      */
-    protected function setInternal($key, $value, $expiry = 0, $casToken = null)
+    protected function setInternal(string $key, mixed $value, int $expiry = 0, ?string $casToken = null): bool
     {
-        if (func_num_args() > 3) {
+        if ($casToken !== null) {
             return $this->casInternal($casToken, $key, $value, $expiry);
         }
         $expiration       = $expiry <= 0 ? 0 : ($expiry > 2592000 ? $expiry : time() + $expiry);
@@ -97,9 +97,9 @@ class Memory extends AbstractStorage
     /**
      * {@inheritdoc}
      */
-    protected function casInternal($casToken, $key, $value, $expiry = 0)
+    protected function casInternal(string $token, string $key, mixed $value, int $expiry = 0): bool
     {
-        if ($casToken === $this->getCasToken($key)) {
+        if ($token === $this->getCasToken($key)) {
             return $this->setInternal($key, $value, $expiry);
         }
         return false;
@@ -108,7 +108,7 @@ class Memory extends AbstractStorage
     /**
      * {@inheritdoc}
      */
-    protected function deleteInternal($key)
+    protected function deleteInternal(string $key): bool
     {
         if ($this->hasInternal($key)) {
             unset($this->data[$key]);
@@ -121,7 +121,7 @@ class Memory extends AbstractStorage
      * {@inheritdoc}
      * @throws \UnexpectedValueException If existing value is not string
      */
-    protected function appendInternal($key, $value, $expiry = 0)
+    protected function appendInternal(string $key, string $value, int $expiry = 0): bool
     {
         if ($this->hasInternal($key)) {
             $oldValue = $this->getInternal($key);
@@ -140,7 +140,7 @@ class Memory extends AbstractStorage
      * {@inheritdoc}
      * @throws \UnexpectedValueException If existing value is not integer
      */
-    protected function incrementInternal($key, $offset = 1, $initial = 0, $expiry = 0)
+    protected function incrementInternal(string $key, int $offset = 1, int $initial = 0, int $expiry = 0): int|bool
     {
         if ($this->hasInternal($key)) {
             $oldValue = $this->getInternal($key);
@@ -165,7 +165,7 @@ class Memory extends AbstractStorage
      * @param  string $key
      * @return string|null
      */
-    protected function getCasToken($key)
+    protected function getCasToken(string $key): ?string
     {
         if (isset($this->data[$key])) {
             return $this->data[$key][2];
@@ -179,8 +179,8 @@ class Memory extends AbstractStorage
      * @param  mixed $value
      * @return string
      */
-    protected function createCasToken($key, $value)
+    protected function createCasToken(string $key, mixed $value): string
     {
-        return uniqid(md5(serialize([$key, $value])));
+        return hash('sha256', serialize([$key, $value]));
     }
 }

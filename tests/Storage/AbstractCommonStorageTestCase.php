@@ -1,22 +1,23 @@
 <?php
 namespace Gamegos\NoSql\Tests\Storage;
 
-/* Imports from PHPUnit */
-use PHPUnit_Framework_TestCase;
-
-/* Imports from PHP core */
+use Gamegos\NoSql\Storage\StorageInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestDox;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 /**
  * Base Test Class for Storages
  * @author Safak Ozpinar <safak@gamegos.com>
  */
-abstract class AbstractCommonStorageTest extends PHPUnit_Framework_TestCase
+abstract class AbstractCommonStorageTestCase extends TestCase
 {
-    /**
-     * @testdox set(), has(), get() and delete()
-     */
-    public function testSetHasGetAndDelete()
+    #[Test]
+    #[TestDox('set(), has(), get() and delete()')]
+    public function setHasGetAndDelete()
     {
         $key   = 'foo';
         $value = 'bar';
@@ -39,10 +40,9 @@ abstract class AbstractCommonStorageTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($storage->delete($key));
     }
 
-    /**
-     * @testdox add() should succeed for new key
-     */
-    public function testAddShouldSucceedForNewKey()
+    #[Test]
+    #[TestDox('add() new key')]
+    public function addNewKey(): array
     {
         $key     = 'foo';
         $value   = 'bar';
@@ -58,22 +58,20 @@ abstract class AbstractCommonStorageTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @testdox add() should fail for existing key
-     */
-    public function testAddShouldFailForExistingKey()
+    #[Test]
+    #[TestDox('add() should fail for existing key')]
+    #[Depends('addNewKey')]
+    public function addShouldFailForExistingKey(array $params)
     {
-        $params  = $this->testAddShouldSucceedForNewKey();
         $storage = $params['storage'];
         $key     = $params['key'];
 
         $this->assertFalse($storage->add($key, 'baz'));
     }
 
-    /**
-     * @testdox add(), set() and has() with expiry
-     */
-    public function testAddSetAndHasWithExpiry()
+    #[Test]
+    #[TestDox('add(), set() and has() with expiry')]
+    public function addSetAndHasWithExpiry()
     {
         $storage = $this->createStorage();
 
@@ -93,7 +91,9 @@ abstract class AbstractCommonStorageTest extends PHPUnit_Framework_TestCase
         $this->assertNull($storage->get('key2'));
     }
 
-    public function testGetMulti()
+    #[Test]
+    #[TestDox('getMulti()')]
+    public function getMulti(): array
     {
         $items = [
             'key1' => 'value1',
@@ -115,12 +115,11 @@ abstract class AbstractCommonStorageTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @testdox getMulti() with CAS token
-     */
-    public function testGetMultiWithCasToken()
+    #[Test]
+    #[TestDox('getMulti() with CAS token')]
+    #[Depends('getMulti')]
+    public function getMultiWithCasToken(array $params)
     {
-        $params = $this->testGetMulti();
         /* @var $storage \Gamegos\NoSql\Storage\StorageInterface */
         $storage   = $params['storage'];
         $items     = $params['items'];
@@ -134,7 +133,7 @@ abstract class AbstractCommonStorageTest extends PHPUnit_Framework_TestCase
         foreach ($items as $key => $value) {
             $this->assertArrayHasKey($key, $casTokens);
             $casToken = $casTokens[$key];
-            $this->assertInternalType('string', gettype($casToken));
+            $this->assertIsString($casToken);
 
             $value .= '.baz';
 
@@ -148,7 +147,9 @@ abstract class AbstractCommonStorageTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($newValues, $storage->getMulti($keys, $casTokens));
     }
 
-    public function testAppend()
+    #[Test]
+    #[TestDox('append()')]
+    public function append()
     {
         $key  = 'foo';
         $str1 = 'bar';
@@ -162,11 +163,30 @@ abstract class AbstractCommonStorageTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($str1 . $str2, $storage->get($key));
     }
 
-    /**
-     * Data provider for non-string values.
-     * @return array
-     */
-    public function nonStringProvider()
+    #[Test]
+    #[TestDox('append() with string existing value')]
+    public function appendWithStringValue()
+    {
+        $storage = $this->createStorage();
+        $storage->set('foo', 'initial');
+
+        $this->assertTrue($storage->append('foo', '.appended'));
+        $this->assertEquals('initial.appended', $storage->get('foo'));
+    }
+
+    #[Test]
+    #[TestDox('append() should throw exception with data set "$_dataName"')]
+    #[DataProvider('nonStringProvider')]
+    public function appendShouldThrowExceptionForNonStringExistingValue($value)
+    {
+        $storage = $this->createStorage();
+        $storage->set('foo', $value);
+
+        $this->expectException(RuntimeException::class);
+        $storage->append('foo', 'bar');
+    }
+
+    public static function nonStringProvider(): array
     {
         return [
             'null'        => [null],
@@ -182,20 +202,9 @@ abstract class AbstractCommonStorageTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @testdox      append() should throw RuntimeException if existing value is not string
-     * @dataProvider nonStringProvider
-     */
-    public function testAppendShouldThrowExceptionForNonStringExistingValue($value)
-    {
-        $storage = $this->createStorage();
-        $storage->set('foo', $value);
-
-        $this->setExpectedException(RuntimeException::class);
-        $storage->append('foo', 'bar');
-    }
-
-    public function testIncrement()
+    #[Test]
+    #[TestDox('increment()')]
+    public function increment()
     {
         $key     = 'foo';
         $initial = 1000;
@@ -207,11 +216,34 @@ abstract class AbstractCommonStorageTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    #[Test]
+    #[TestDox('increment() with integer existing value')]
+    public function incrementWithIntegerValue()
+    {
+        $storage = $this->createStorage();
+        $storage->set('foo', 10);
+
+        $this->assertEquals(11, $storage->increment('foo'));
+        $this->assertEquals(11, $storage->get('foo'));
+    }
+
+    #[Test]
+    #[TestDox('increment() should throw exception with data set "$_dataName"')]
+    #[DataProvider('nonIntegerProvider')]
+    public function incrementShouldThrowExceptionForNonIntegerExistingValue($value)
+    {
+        $storage = $this->createStorage();
+        $storage->set('foo', $value);
+
+        $this->expectException(RuntimeException::class);
+        $storage->increment('foo');
+    }
+
     /**
      * Data provider for non-integer values.
      * @return array
      */
-    public function nonIntegerProvider()
+    public static function nonIntegerProvider(): array
     {
         return [
             'null'        => [null],
@@ -226,22 +258,8 @@ abstract class AbstractCommonStorageTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @testdox      increment() should throw RuntimeException if existing value is not integer
-     * @dataProvider nonIntegerProvider
-     */
-    public function testIncrementShouldThrowExceptionForNonIntegerExistingValue($value)
-    {
-        $storage = $this->createStorage();
-        $storage->set('foo', $value);
-
-        $this->setExpectedException(RuntimeException::class);
-        $storage->increment('foo');
-    }
-
-    /**
-     * @testdox get() and set() with CAS token
-     */
+    #[Test]
+    #[TestDox('get() and set() with CAS token')]
     public function testGetAndSetWithCasToken()
     {
         $key      = 'foo';
@@ -253,7 +271,7 @@ abstract class AbstractCommonStorageTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($storage->set($key, $value, 0, $casToken));
 
         $this->assertEquals($value, $storage->get($key, $casToken));
-        $this->assertInternalType('string', gettype($casToken));
+        $this->assertIsString($casToken);
 
         $value = 'baz';
         $this->assertTrue($storage->set($key, $value, 0, $casToken));
@@ -264,20 +282,19 @@ abstract class AbstractCommonStorageTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($storage->set($key, $value, 0, $casToken));
     }
 
-    /**
-     * @testdox Compare and swap
-     */
-    public function testCas()
+    #[Test]
+    #[TestDox('Compare and swap (CAS)')]
+    public function cas()
     {
         $key      = 'foo';
         $value    = 'bar';
         $casToken = null;
         $storage  = $this->createStorage();
 
-        $this->assertTrue($storage->set($key, $value));
+        $storage->set($key, $value);
 
         $this->assertEquals($value, $storage->get($key, $casToken));
-        $this->assertInternalType('string', gettype($casToken));
+        $this->assertIsString($casToken);
 
         $value = 'baz';
         $this->assertTrue($storage->cas($casToken, $key, $value));
@@ -288,9 +305,21 @@ abstract class AbstractCommonStorageTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($storage->cas($casToken, $key, $value));
     }
 
+    #[Test]
+    #[TestDox('cas() should fail for non-existing key')]
+    public function casWithNonExisting()
+    {
+        $key      = 'foo';
+        $value    = 'bar';
+        $casToken = 'invalid cas token';
+        $storage  = $this->createStorage();
+
+        $this->assertFalse($storage->cas($casToken, $key, $value));
+    }
+
     /**
      * Create and return a storage.
      * @return \Gamegos\NoSql\Storage\StorageInterface
      */
-    abstract public function createStorage();
+    abstract public function createStorage(): StorageInterface;
 }

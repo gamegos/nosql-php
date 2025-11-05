@@ -1,7 +1,6 @@
 <?php
 namespace Gamegos\NoSql\Storage\Exception;
 
-/* Imports from PHP core */
 use InvalidArgumentException;
 
 /**

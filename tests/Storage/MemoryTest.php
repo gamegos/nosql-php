@@ -1,21 +1,22 @@
 <?php
 namespace Gamegos\NoSql\Tests\Storage;
 
-/* Import from gamegos/nosql */
 use Gamegos\NoSql\Storage\Memory;
+use Gamegos\NoSql\Storage\StorageInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Test Class for Storage\Memory
- * @covers Gamegos\NoSql\Storage\Memory
  * @author Safak Ozpinar <safak@gamegos.com>
  */
-class MemoryTest extends AbstractCommonStorageTest
+#[CoversClass(Memory::class)]
+class MemoryTest extends AbstractCommonStorageTestCase
 {
     /**
      * {@inheritdoc}
      * @return \Gamegos\NoSql\Storage\Memory
      */
-    public function createStorage()
+    public function createStorage(): StorageInterface
     {
         return new Memory();
     }

@@ -13,46 +13,46 @@ interface StorageInterface
      * @param  string $key
      * @return bool
      */
-    public function has($key);
+    public function has(string $key): bool;
 
     /**
      * Get a value from the storage.
      * @param  string $key
-     * @param  string $casToken
+     * @param  string|null $casToken
      * @return mixed
      */
-    public function get($key, & $casToken = null);
+    public function get(string $key, ?string &$casToken = null): mixed;
 
     /**
      * Get multiple values from the storage.
-     * @param  array $keys
-     * @param  array $casTokens
-     * @return array
+     * @param  array<string> $keys
+     * @param  array<string>|null $casTokens
+     * @return array<string, mixed>
      */
-    public function getMulti(array $keys, array & $casTokens = null);
+    public function getMulti(array $keys, ?array &$casTokens = null): array;
 
     /**
-     * Add an value under a new key.
+     * Add a value under a new key.
      * @param  string $key
      * @param  mixed $value
      * @param  int $expiry
      * @return bool
      */
-    public function add($key, $value, $expiry = 0);
+    public function add(string $key, mixed $value, int $expiry = 0): bool;
 
     /**
      * Store/update a value in the storage.
      * @param  string $key
      * @param  mixed $value
      * @param  int $expiry
-     * @param  string $casToken
+     * @param  string|null $casToken
      * @return bool
      */
-    public function set($key, $value, $expiry = 0, $casToken = null);
+    public function set(string $key, mixed $value, int $expiry = 0, ?string $casToken = null): bool;
 
     /**
-     * Store a value only if the token matches.
-     * @param  string $token
+     * Compare and swap (CAS) a value in the storage.
+     * @param  string $casToken
      * @param  string $key
      * @param  mixed $value
      * @param  int $expiry
@@ -60,14 +60,14 @@ interface StorageInterface
      * @see    StorageInterface::get()
      * @see    StorageInterface::getMulti()
      */
-    public function cas($token, $key, $value, $expiry = 0);
+    public function cas(string $casToken, string $key, mixed $value, int $expiry = 0): bool;
 
     /**
      * Delete a value from the storage.
      * @param  string $key
      * @return bool
      */
-    public function delete($key);
+    public function delete(string $key): bool;
 
     /**
      * Append a value to an existing value.
@@ -76,7 +76,7 @@ interface StorageInterface
      * @param  int $expiry
      * @return bool
      */
-    public function append($key, $value, $expiry = 0);
+    public function append(string $key, string $value, int $expiry = 0): bool;
 
     /**
      * Increment value of a numeric entry.
@@ -84,7 +84,7 @@ interface StorageInterface
      * @param  int $offset
      * @param  int $initial
      * @param  int $expiry
-     * @return int|boolean
+     * @return int|bool
      */
-    public function increment($key, $offset = 1, $initial = 0, $expiry = 0);
+    public function increment(string $key, int $offset = 1, int $initial = 0, int $expiry = 0): int|bool;
 }

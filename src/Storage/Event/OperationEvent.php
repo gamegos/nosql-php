@@ -1,15 +1,10 @@
 <?php
 namespace Gamegos\NoSql\Storage\Event;
 
-/* Imports from gamegos/events */
 use Gamegos\Events\Event;
-
-/* Imports from gamegos/nosql */
 use Gamegos\NoSql\Storage\StorageInterface;
 use Gamegos\NoSql\Storage\OperationArguments;
-
-/* Imports from PHP core */
-use Exception;
+use Throwable;
 
 /**
  * Operation Event
@@ -21,25 +16,25 @@ class OperationEvent extends Event
      * Operation name
      * @var string
      */
-    protected $operation;
+    protected string $operation;
 
     /**
      * Arguments of the operation
      * @var \Gamegos\NoSql\Storage\OperationArguments
      */
-    protected $arguments;
+    protected OperationArguments $arguments;
 
     /**
      * Return value of the operation
      * @var mixed
      */
-    protected $returnValue;
+    protected mixed $returnValue;
 
     /**
      * Exception thrown in the operation
-     * @var \Exception
+     * @var \Throwable
      */
-    protected $exception;
+    protected Throwable $exception;
 
     /**
      * Construct
@@ -51,18 +46,18 @@ class OperationEvent extends Event
      *     Operation name
      * @param \Gamegos\NoSql\Storage\OperationArguments $arguments
      *     Operation arguments
-     * @param mixed $returnValue
+     * @param mixed|null $returnValue
      *     Return value of the operation
-     * @param \Exception $exception
+     * @param \Throwable|null $exception
      *     Exception thrown in the operation
      */
     public function __construct(
-        $name,
-        StorageInterface $storage,
-        $operation,
+        string             $name,
+        StorageInterface   $storage,
+        string             $operation,
         OperationArguments $arguments,
-        & $returnValue = null,
-        Exception $exception = null
+        mixed              &$returnValue = null,
+        ?Throwable          $exception = null
     ) {
         parent::__construct($name, $storage);
         $this->setOperation($operation);
@@ -79,7 +74,7 @@ class OperationEvent extends Event
      * Get operation name.
      * @return string
      */
-    public function getOperation()
+    public function getOperation(): string
     {
         return $this->operation;
     }
@@ -88,16 +83,16 @@ class OperationEvent extends Event
      * Set operation name.
      * @param string $operation
      */
-    public function setOperation($operation)
+    public function setOperation(string $operation): void
     {
-        $this->operation = (string) $operation;
+        $this->operation = $operation;
     }
 
     /**
      * Get operation arguments.
      * @return \Gamegos\NoSql\Storage\OperationArguments
      */
-    public function getArguments()
+    public function getArguments(): OperationArguments
     {
         return $this->arguments;
     }
@@ -106,7 +101,7 @@ class OperationEvent extends Event
      * Set operation arguments.
      * @param \Gamegos\NoSql\Storage\OperationArguments $arguments
      */
-    public function setArguments(OperationArguments $arguments)
+    public function setArguments(OperationArguments $arguments): void
     {
         $this->arguments = $arguments;
     }
@@ -115,7 +110,7 @@ class OperationEvent extends Event
      * Get the reference of the returned value.
      * @return mixed
      */
-    public function & getReturnValue()
+    public function &getReturnValue(): mixed
     {
         return $this->returnValue;
     }
@@ -124,25 +119,25 @@ class OperationEvent extends Event
      * Set the reference of the returned value.
      * @param mixed $returnValue
      */
-    public function setReturnValue(& $returnValue)
+    public function setReturnValue(mixed &$returnValue): void
     {
         $this->returnValue = & $returnValue;
     }
 
     /**
      * Get the exception thrown in the operation.
-     * @return \Exception
+     * @return \Throwable
      */
-    public function getException()
+    public function getException(): Throwable
     {
         return $this->exception;
     }
 
     /**
      * Set the exception thrown in the operation.
-     * @param \Exception $exception
+     * @param \Throwable $exception
      */
-    public function setException(Exception $exception)
+    public function setException(Throwable $exception): void
     {
         $this->exception = $exception;
     }

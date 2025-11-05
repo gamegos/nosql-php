@@ -1,7 +1,6 @@
 <?php
 namespace Gamegos\NoSql\Tests\TestAsset\DataProvider;
 
-/* Imports from PHP core */
 use Exception;
 
 /**
@@ -14,7 +13,7 @@ class OperationParamsProvider
      * Get data.
      * @return array
      */
-    public function getData()
+    public static function getData(): array
     {
         return [
             // Test has() method with 1 argument.
@@ -154,7 +153,7 @@ class OperationParamsProvider
             'cas with 3 args'          => [
                 'cas',
                 [
-                    'casToken' => null,
+                    'casToken' => 'test-token',
                     'key'      => 'foo',
                     'value'    => 'bar',
                 ],
@@ -164,7 +163,7 @@ class OperationParamsProvider
             'cas with 4 args'          => [
                 'cas',
                 [
-                    'casToken' => null,
+                    'casToken' => 'test-token',
                     'key'      => 'foo',
                     'value'    => 'bar',
                     'expiry'   => 100,
@@ -175,7 +174,7 @@ class OperationParamsProvider
             'cas with exception'       => [
                 'cas',
                 [
-                    'casToken' => null,
+                    'casToken' => 'test-token',
                     'key'      => 'foo',
                     'value'    => 'bar',
                 ],

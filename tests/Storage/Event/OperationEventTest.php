@@ -1,28 +1,27 @@
 <?php
 namespace Gamegos\NoSql\Tests\Storage\Event;
 
-/* Imports from PHPUnit */
-use PHPUnit_Framework_TestCase;
-
-/* Imports from gamegos/nosql */
+use Exception;
 use Gamegos\NoSql\Storage\Event\OperationEvent;
 use Gamegos\NoSql\Storage\StorageInterface;
 use Gamegos\NoSql\Storage\OperationArguments;
-
-/* Imports from PHP core */
-use Exception;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestDox;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test Class for OperationEvent
  * @author Safak Ozpinar <safak@gamegos.com>
  */
-class OperationEventTest extends PHPUnit_Framework_TestCase
+class OperationEventTest extends TestCase
 {
-    public function testConstructorArguments()
+    #[Test]
+    #[TestDox('Constructor should set all properties correctly')]
+    public function constructorArguments()
     {
         $key       = 'foo';
         $eventName = 'beforeOperation';
-        $storage   = $this->getMockForAbstractClass(StorageInterface::class);
+        $storage   = $this->createMock(StorageInterface::class);
         $operation = 'get';
         $arguments = (new OperationArguments($operation))->setKey($key);
         $returnVal = 'bar';
@@ -38,11 +37,13 @@ class OperationEventTest extends PHPUnit_Framework_TestCase
         $this->assertSame($exception, $event->getException());
     }
 
+    #[Test]
+    #[TestDox('Getters and Setters should work correctly')]
     public function testSettersAndGetters()
     {
         $event = new OperationEvent(
             'unusedEvent',
-            $this->getMockForAbstractClass(StorageInterface::class),
+            $this->createMock(StorageInterface::class),
             'differentOperation',
             $this->getMockBuilder(OperationArguments::class)->disableOriginalConstructor()->getMock()
         );
@@ -64,12 +65,14 @@ class OperationEventTest extends PHPUnit_Framework_TestCase
         $this->assertSame($exception, $event->getException());
     }
 
-    public function testReturnValueReference()
+    #[Test]
+    #[TestDox('Return value reference should work correctly')]
+    public function returnValueReference()
     {
         $key   = 'foo';
         $event = new OperationEvent(
             'beforeOperation',
-            $this->getMockForAbstractClass(StorageInterface::class),
+            $this->createMock(StorageInterface::class),
             'get',
             (new OperationArguments('get'))->setKey($key)
         );
