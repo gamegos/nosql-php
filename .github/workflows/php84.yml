@@ -1,0 +1,17 @@
+# PHP 8.4 Testing Workflow
+
+name: PHP 8.4 Tests
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  php84:
+    name: PHP 8.4
+    uses: ./.github/workflows/test-reusable.yml
+    with:
+      php-version: '8.4'
+

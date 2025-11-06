@@ -1,0 +1,45 @@
+# Reusable workflow for testing with specific PHP version
+
+name: Test PHP
+
+on:
+  workflow_call:
+    inputs:
+      php-version:
+        required: true
+        type: string
+        description: 'PHP version to test'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Test PHP ${{ inputs.php-version }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP ${{ inputs.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php-version }}
+          extensions: dom, curl, libxml, mbstring, zip
+          coverage: none
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ inputs.php-version }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ inputs.php-version }}-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Run test suite
+        run: vendor/bin/phpunit --no-coverage

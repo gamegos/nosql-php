@@ -1,0 +1,17 @@
+# PHP 8.3 Testing Workflow
+
+name: PHP 8.3 Tests
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  php83:
+    name: PHP 8.3
+    uses: ./.github/workflows/test-reusable.yml
+    with:
+      php-version: '8.3'
+

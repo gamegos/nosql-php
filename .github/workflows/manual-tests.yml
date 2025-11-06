@@ -1,0 +1,23 @@
+# Manual Testing Workflow - Run tests on demand
+
+name: Manual Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      php-version:
+        description: 'PHP Version to test'
+        required: true
+        default: '8.3'
+        type: choice
+        options:
+          - '8.3'
+          - '8.4'
+
+jobs:
+  manual-test:
+    name: Manual Test PHP ${{ inputs.php-version }}
+    uses: ./.github/workflows/test-reusable.yml
+    with:
+      php-version: ${{ inputs.php-version }}
+
