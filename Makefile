@@ -22,6 +22,7 @@ build-php84: ## Build test container for PHP 8.4
 test: build
 	docker compose run --build --rm test \
 		vendor/bin/phpunit \
+		--testdox \
 		--coverage-text=php://stdout --coverage-html=.tmp/reports/coverage
 
 test-php83: ## Run tests with PHP 8.3
